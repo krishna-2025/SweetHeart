@@ -167,8 +167,8 @@
 
         @media screen and (max-width: 768px) {
             #drag-container img, #drag-container video {
-                width: 65px;
-                height: 95px;
+                width: 75px;
+                height: 110px;
             }
             #drag-container p {
                 font-size: 6vw;
@@ -225,9 +225,9 @@
 
         function getDimensions() {
             var isMobile = window.innerWidth <= 768;
-            var imgW = isMobile ? 65 : 120;
-            var imgH = isMobile ? 95 : 170;
-            var r = isMobile ? 145 : 210; // 145px radius creates proper gap on mobile
+            var imgW = isMobile ? 75 : 120;
+            var imgH = isMobile ? 110 : 170;
+            var r = isMobile ? 155 : 210; // 155px radius creates proper gap on mobile with larger images
             return { imgWidth: imgW, imgHeight: imgH, radius: r };
         }
 
