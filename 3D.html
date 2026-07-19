@@ -116,7 +116,7 @@
             left: 24%;
             opacity: 0;
             animation: showUp 1s forwards;
-            animation-delay: 1.5s;
+            animation-delay: 5s;
             transition: all .3s ease-in-out;
         }
 
@@ -165,73 +165,24 @@
             height: 100vh;
         }
 
-        /* Mobile-only layout wrapper */
-        .mobile-container {
-            display: none;
-        }
-
         @media screen and (max-width: 768px) {
-            /* Hide desktop elements that don't fit mobile well */
-            #spin-container p, 
-            #spin-container .button {
-                display: none !important;
-            }
-
-            /* Enable mobile container */
-            .mobile-container {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: space-between;
-                position: absolute;
-                inset: 0;
-                z-index: 200; /* Above the canvas and carousel drag controls */
-                padding: 50px 20px;
-                box-sizing: border-box;
-                pointer-events: none; /* Let clicks pass through to carousel */
-            }
-
-            .mobile-title {
-                pointer-events: auto; /* Enable interaction */
-                font-family: "Pacifico", sans-serif;
-                font-size: 26px;
-                color: #fff;
-                text-align: center;
-                text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-                margin-top: 10px;
-                animation: fadein ease 1.5s;
-            }
-
-            .mobile-title span {
-                color: #ff9cc9;
-                display: block;
-                font-size: 34px;
-            }
-
-            .mobile-button {
-                pointer-events: auto; /* Enable clicking */
-                height: 80px;
-                width: 140px;
-                background: url('./images/Message.png');
-                background-size: contain;
-                background-repeat: no-repeat;
-                background-position: center;
-                border: none;
-                outline: none;
-                cursor: pointer;
-                animation: showUp 1s forwards;
-                animation-delay: 1s;
-                opacity: 0;
-                transition: transform 0.3s ease;
-            }
-
-            .mobile-button:active {
-                transform: scale(0.9);
-            }
-
             #drag-container img, #drag-container video {
                 width: 80px;
                 height: 115px;
+            }
+            #drag-container p {
+                font-size: 6vw;
+                line-height: 50px;
+            }
+            .button {
+                height: 70px;
+                width: 110px;
+                top: -70px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+            .button:hover {
+                transform: translateX(-50%) scale(1.2);
             }
         }
     </style>
@@ -239,24 +190,18 @@
 <body>
     <canvas id="canvas"></canvas>
     
-    <!-- Mobile-only static vertical layout elements -->
-    <div class="mobile-container">
-        <h1 class="mobile-title">Happy Birthday <br><span>Jaan</span></h1>
-        <button class="mobile-button" onclick="playSurprise()"></button>
-    </div>
-    
     <div id="drag-container">
         <div id="spin-container">
             <img src="./images/r1.jpeg" alt="">
-            <img src="./images/r2.jpg" alt="">
-            <img src="./images/r3.jpg" alt="">
-            <img src="./images/r4.jpg" alt="">
-            <img src="./images/r5.jpg" alt="">
-            <img src="./images/r6.jpg" alt="">
-            <img src="./images/r7.jpg" alt="">
-            <img src="./images/r8.jpg" alt="">
-            <img src="./images/r9.jpg" alt="">
-            <img src="./images/r10.jpg" alt="">
+            <img src="./images/r2.jpeg" alt="">
+            <img src="./images/r3.jpeg" alt="">
+            <img src="./images/r4.jpeg" alt="">
+            <img src="./images/r5.jpeg" alt="">
+            <img src="./images/r6.jpeg" alt="">
+            <img src="./images/r7.jpeg" alt="">
+            <img src="./images/r8.jpeg" alt="">
+            <img src="./images/r9.jpeg" alt="">
+            <img src="./images/r10.jpeg" alt="">
             <p>Happy<span> Birthday</span> Jaan</p>
             <button class="button" onclick="playSurprise()"></button>
         </div>
@@ -291,7 +236,7 @@
         var imgWidth = dims.imgWidth;
         var imgHeight = dims.imgHeight;
 
-        setTimeout(init, 200);
+        setTimeout(init, 1000);
 
         var odrag = document.getElementById('drag-container');
         var ospin = document.getElementById('spin-container');
@@ -320,7 +265,7 @@
             for (var i = 0; i < aEle.length; i++) {
                 aEle[i].style.transform = "rotateY(" + (i * (360 / aEle.length)) + "deg) translateZ(" + radius + "px)";
                 aEle[i].style.transition = "transform 1s";
-                aEle[i].style.transitionDelay = delayTime || (aEle.length - i) / 15 + "s";
+                aEle[i].style.transitionDelay = delayTime || (aEle.length - i) / 4 + "s";
             }
         }
 
@@ -388,7 +333,7 @@
         };
 
         // 3D Realistic Smaller Hearts
-        function initHearts() {
+        window.onload = function () {
             const canvas = document.getElementById("canvas");
             const ctx = canvas.getContext("2d");
             canvas.width = window.innerWidth;
@@ -499,9 +444,7 @@
                 canvas.width = window.innerWidth;
                 canvas.height = window.innerHeight;
             });
-        }
-
-        initHearts();
+        };
 
         // Surprise: confetti + music on button click
         function playSurprise() {
