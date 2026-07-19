@@ -227,7 +227,7 @@
             var isMobile = window.innerWidth <= 768;
             var imgW = isMobile ? 80 : 120;
             var imgH = isMobile ? 115 : 170;
-            var r = isMobile ? Math.min(135, Math.max(95, Math.floor(window.innerWidth * 0.30))) : 210;
+            var r = isMobile ? 180 : 210; // Increased mobile radius for better spacing
             return { imgWidth: imgW, imgHeight: imgH, radius: r };
         }
 
@@ -251,6 +251,8 @@
         ground.style.width = radius * 3 + "px";
         ground.style.height = radius * 3 + "px";
 
+        var initCompleted = false;
+
         function init(delayTime) {
             var d = getDimensions();
             radius = d.radius;
@@ -262,11 +264,27 @@
             ground.style.width = radius * 3 + "px";
             ground.style.height = radius * 3 + "px";
 
+            var isMobile = window.innerWidth <= 768;
+
             for (var i = 0; i < aEle.length; i++) {
-                aEle[i].style.transform = "rotateY(" + (i * (360 / aEle.length)) + "deg) translateZ(" + radius + "px)";
+                if (isMobile) {
+                    var angle = i * (360 / aEle.length);
+                    aEle[i].style.transform = "rotateX(" + angle + "deg) translateZ(" + radius + "px) rotateX(" + (-angle) + "deg)";
+                } else {
+                    aEle[i].style.transform = "rotateY(" + (i * (360 / aEle.length)) + "deg) translateZ(" + radius + "px)";
+                }
                 aEle[i].style.transition = "transform 1s";
                 aEle[i].style.transitionDelay = delayTime || (aEle.length - i) / 4 + "s";
             }
+
+            // Staggered entry animation takes about 3.5 seconds
+            setTimeout(function() {
+                initCompleted = true;
+                for (var i = 0; i < aEle.length; i++) {
+                    aEle[i].style.transition = "none";
+                    aEle[i].style.transitionDelay = "0s";
+                }
+            }, 3500);
         }
 
         window.addEventListener('resize', function() {
@@ -279,16 +297,40 @@
             obj.style.transform = "rotateX(" + (-tY) + "deg) rotateY(" + (tX) + "deg)";
         }
 
+        var isSpinning = true;
         function playSpin(yes) {
-            ospin.style.animationPlayState = (yes?'running':'paused');
+            isSpinning = yes;
         }
 
         var sX, sY, nX, nY, desX = 0, desY = 0, tX = 0, tY = 10;
 
-        if (autoRotate) {
-            var animationName = (rotateSpeed > 0 ? 'spin' : 'spinRevert');
-            ospin.style.animation = `${animationName} ${Math.abs(rotateSpeed)}s infinite linear`;
+        // Auto-rotation loop inside requestAnimationFrame
+        var rotationAngle = 0;
+        var lastTime = performance.now();
+        function rotateCarousel(timestamp) {
+            var dt = (timestamp - lastTime) / 1000;
+            if (!dt || dt > 0.1) dt = 0.016;
+            lastTime = timestamp;
+
+            if (initCompleted) {
+                var isMobile = window.innerWidth <= 768;
+                if (autoRotate && isSpinning) {
+                    var speed = 360 / Math.abs(rotateSpeed) * (rotateSpeed > 0 ? 1 : -1); 
+                    rotationAngle += speed * dt;
+                }
+
+                for (var i = 0; i < aEle.length; i++) {
+                    var angle = i * (360 / aEle.length) + rotationAngle;
+                    if (isMobile) {
+                        aEle[i].style.transform = "rotateX(" + angle + "deg) translateZ(" + radius + "px) rotateX(" + (-angle) + "deg)";
+                    } else {
+                        aEle[i].style.transform = "rotateY(" + angle + "deg) translateZ(" + radius + "px)";
+                    }
+                }
+            }
+            requestAnimationFrame(rotateCarousel);
         }
+        requestAnimationFrame(rotateCarousel);
 
         document.onpointerdown = function (e) {
             clearInterval(odrag.timer);
